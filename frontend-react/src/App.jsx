@@ -22,7 +22,7 @@ ChartJS.register(
     Legend
 );
 
-const API = "http://localhost:5000/api/equipment";
+const API = "https://powerwatch-u47p.onrender.com/api/equipment";
 
 
 function getStatus(temperature) {
