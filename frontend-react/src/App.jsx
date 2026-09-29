@@ -411,7 +411,15 @@ function App() {
 
             );
 
-        });
+        }).sort((a, b) => {
+    const order = {
+        Transformer: 1,
+        Motor: 2,
+        Generator: 3
+    };
+
+    return order[a.type] - order[b.type];
+});
 
 
     // =========================
@@ -461,29 +469,25 @@ function App() {
 
             {
 
-                label:
-                    "Temperature (°C)",
-
-                data:
-                    equipment.map(
-                        item =>
-                            item.temperature
-                    )
+               label: "Temperature (°C)",
+    data: equipment.map(
+        item => item.temperature
+    ),
+    backgroundColor: "#2563eb",
+    borderColor: "#1d4ed8",
+    borderWidth: 1
 
             },
 
             {
-
-                label:
-                    "Load (%)",
-
-                data:
-                    equipment.map(
-                        item =>
-                            item.load
-                    )
-
-            }
+    label: "Load (%)",
+    data: equipment.map(
+        item => item.load
+    ),
+    backgroundColor: "#60a5fa",
+    borderColor: "#2563eb",
+    borderWidth: 1
+}
 
         ]
 
@@ -1274,6 +1278,10 @@ function App() {
                     <p>
                         PowerWatch • Industrial Electrical Equipment Monitoring System
                     </p>
+                    <div className="developer-credit">
+    <strong>Designed & Developed by Aayush Kumar</strong>
+    <span>aayushkmr024@gmail.com</span>
+</div>
 
                 </footer>
 
