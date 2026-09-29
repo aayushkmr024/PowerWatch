@@ -1022,3 +1022,130 @@ footer {
     border-radius: 4px;
     opacity: 1;
 }
+
+/* =========================================
+   INLINE EQUIPMENT EDIT UX
+   ========================================= */
+
+.equipment-header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.edit-button {
+    border: 1px solid #dbe3ec;
+    background: #f8fafc;
+    color: #2563eb;
+    padding: 7px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(-2px);
+    transition: opacity 0.2s ease, transform 0.2s ease, background 0.2s ease;
+}
+
+.equipment-card:hover .edit-button,
+.edit-button:focus-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.edit-button:hover {
+    background: #eff6ff;
+}
+
+.inline-edit-panel {
+    margin-top: 20px;
+    padding: 16px;
+    border: 1px solid #dbeafe;
+    border-radius: 12px;
+    background: #f8fbff;
+}
+
+.inline-edit-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.inline-edit-field label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #475569;
+}
+
+.inline-edit-field input {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: white;
+    color: #0f172a;
+    font-size: 14px;
+    outline: none;
+}
+
+.inline-edit-field input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+.inline-edit-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.save-edit-button,
+.cancel-edit-button {
+    flex: 1;
+    border: none;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.save-edit-button {
+    background: #2563eb;
+    color: white;
+}
+
+.save-edit-button:hover {
+    background: #1d4ed8;
+}
+
+.cancel-edit-button {
+    background: #e2e8f0;
+    color: #334155;
+}
+
+.cancel-edit-button:hover {
+    background: #cbd5e1;
+}
+
+@media (max-width: 768px) {
+    .edit-button {
+        opacity: 1;
+        transform: none;
+    }
+
+    .equipment-header-right {
+        gap: 5px;
+    }
+
+    .edit-button {
+        padding: 6px 8px;
+        font-size: 11px;
+    }
+
+    .inline-edit-actions {
+        flex-direction: column;
+    }
+}
+

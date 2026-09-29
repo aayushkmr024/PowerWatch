@@ -54,6 +54,8 @@ function App() {
         load: ""
     });
 
+    const [editingEquipment, setEditingEquipment] = useState(null);
+
 
     // =========================
     // LOAD EQUIPMENT
@@ -200,6 +202,75 @@ function App() {
 
         }
 
+    };
+
+
+    // =========================
+    // EDIT EQUIPMENT
+    // =========================
+
+    const updateEquipment = async () => {
+
+        if (!editingEquipment) {
+            return;
+        }
+
+        const temperature = Number(
+            editingEquipment.temperature
+        );
+
+        const load = Number(
+            editingEquipment.load
+        );
+
+        if (
+            Number.isNaN(temperature) ||
+            Number.isNaN(load) ||
+            temperature < 0 ||
+            load < 0
+        ) {
+            alert("Please enter valid temperature and load values.");
+            return;
+        }
+
+        try {
+
+            const response = await fetch(
+                `${API}/${editingEquipment.id}`,
+                {
+                    method: "PUT",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        temperature,
+                        load,
+                        status: getStatus(temperature)
+                    })
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error(
+                    "Failed to update equipment"
+                );
+            }
+
+            setEditingEquipment(null);
+
+            await loadEquipment();
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert(
+                "Failed to update equipment."
+            );
+
+        }
     };
 
 
@@ -469,25 +540,37 @@ function App() {
 
             {
 
-               label: "Temperature (°C)",
-    data: equipment.map(
-        item => item.temperature
-    ),
-    backgroundColor: "#2563eb",
-    borderColor: "#1d4ed8",
-    borderWidth: 1
+                label:
+                    "Temperature (°C)",
+
+                data:
+                    equipment.map(
+                        item =>
+                            item.temperature
+                    ),
+
+                backgroundColor: "#2563eb",
+                borderColor: "#1d4ed8",
+                borderWidth: 1
 
             },
 
             {
-    label: "Load (%)",
-    data: equipment.map(
-        item => item.load
-    ),
-    backgroundColor: "#60a5fa",
-    borderColor: "#2563eb",
-    borderWidth: 1
-}
+
+                label:
+                    "Load (%)",
+
+                data:
+                    equipment.map(
+                        item =>
+                            item.load
+                    ),
+
+                backgroundColor: "#60a5fa",
+                borderColor: "#2563eb",
+                borderWidth: 1
+
+            }
 
         ]
 
@@ -904,19 +987,14 @@ function App() {
 
                         {filteredEquipment.map(
                             (item) => (
-
                                 <div
-
                                     className={`equipment-card ${item.status.toLowerCase()}`}
-
                                     key={item._id || item.id}
-
                                 >
 
                                     <div className="equipment-header">
 
                                         <div>
-
                                             <h3>
                                                 {item.id}
                                             </h3>
@@ -924,113 +1002,199 @@ function App() {
                                             <p>
                                                 {item.type}
                                             </p>
-
                                         </div>
 
+                                        <div className="equipment-header-right">
 
-                                        <span
-                                            className={`status-badge ${item.status.toLowerCase()}`}
-                                        >
+                                            <button
+                                                type="button"
+                                                className="edit-button"
+                                                onClick={() =>
+                                                    setEditingEquipment({
+                                                        ...item
+                                                    })
+                                                }
+                                                aria-label={`Edit ${item.id}`}
+                                            >
+                                                ✎ Edit
+                                            </button>
 
-                                            {item.status}
-
-                                        </span>
-
-                                    </div>
-
-
-                                    <div className="equipment-values">
-
-                                        <div>
-
-                                            <span>
-                                                Temperature
+                                            <span
+                                                className={`status-badge ${item.status.toLowerCase()}`}
+                                            >
+                                                {item.status}
                                             </span>
 
-                                            <strong>
-                                                {item.temperature}°C
-                                            </strong>
-
-                                        </div>
-
-
-                                        <div>
-
-                                            <span>
-                                                Load
-                                            </span>
-
-                                            <strong>
-                                                {item.load}%
-                                            </strong>
-
                                         </div>
 
                                     </div>
 
 
-                                    <div className="maintenance-info">
+                                    {editingEquipment?.id === item.id ? (
 
-                                        Maintenance:
+                                        <div className="inline-edit-panel">
 
-                                        <strong>
+                                            <div className="inline-edit-field">
 
-                                            {item.maintenanceDue
-                                                ? " Due"
-                                                : " OK"}
+                                                <label>
+                                                    Temperature (°C)
+                                                </label>
 
-                                        </strong>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    value={editingEquipment.temperature}
+                                                    onChange={(event) =>
+                                                        setEditingEquipment({
+                                                            ...editingEquipment,
+                                                            temperature:
+                                                                event.target.value
+                                                        })
+                                                    }
+                                                />
 
-                                    </div>
-
-
-                                    <div className="equipment-actions">
-
-                                        <button
-                                            onClick={() =>
-                                                increaseTemperature(
-                                                    item
-                                                )
-                                            }
-                                        >
-
-                                            +5°C
-
-                                        </button>
+                                            </div>
 
 
-                                        <button
-                                            onClick={() =>
-                                                toggleMaintenance(
-                                                    item
-                                                )
-                                            }
-                                        >
+                                            <div className="inline-edit-field">
 
-                                            {item.maintenanceDue
-                                                ? "Mark Done"
-                                                : "Maintenance"}
+                                                <label>
+                                                    Load (%)
+                                                </label>
 
-                                        </button>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    value={editingEquipment.load}
+                                                    onChange={(event) =>
+                                                        setEditingEquipment({
+                                                            ...editingEquipment,
+                                                            load:
+                                                                event.target.value
+                                                        })
+                                                    }
+                                                />
+
+                                            </div>
 
 
-                                        <button
-                                            className="delete-button"
-                                            onClick={() =>
-                                                deleteEquipment(
-                                                    item.id
-                                                )
-                                            }
-                                        >
+                                            <div className="inline-edit-actions">
 
-                                            Delete
+                                                <button
+                                                    type="button"
+                                                    className="save-edit-button"
+                                                    onClick={updateEquipment}
+                                                >
+                                                    Save Changes
+                                                </button>
 
-                                        </button>
+                                                <button
+                                                    type="button"
+                                                    className="cancel-edit-button"
+                                                    onClick={() =>
+                                                        setEditingEquipment(null)
+                                                    }
+                                                >
+                                                    Cancel
+                                                </button>
 
-                                    </div>
+                                            </div>
+
+                                        </div>
+
+                                    ) : (
+
+                                        <>
+
+                                            <div className="equipment-values">
+
+                                                <div>
+
+                                                    <span>
+                                                        Temperature
+                                                    </span>
+
+                                                    <strong>
+                                                        {item.temperature}°C
+                                                    </strong>
+
+                                                </div>
+
+
+                                                <div>
+
+                                                    <span>
+                                                        Load
+                                                    </span>
+
+                                                    <strong>
+                                                        {item.load}%
+                                                    </strong>
+
+                                                </div>
+
+                                            </div>
+
+
+                                            <div className="maintenance-info">
+
+                                                Maintenance:
+
+                                                <strong>
+
+                                                    {item.maintenanceDue
+                                                        ? " Due"
+                                                        : " OK"}
+
+                                                </strong>
+
+                                            </div>
+
+
+                                            <div className="equipment-actions">
+
+                                                <button
+                                                    onClick={() =>
+                                                        increaseTemperature(
+                                                            item
+                                                        )
+                                                    }
+                                                >
+                                                    +5°C
+                                                </button>
+
+
+                                                <button
+                                                    onClick={() =>
+                                                        toggleMaintenance(
+                                                            item
+                                                        )
+                                                    }
+                                                >
+                                                    {item.maintenanceDue
+                                                        ? "Mark Done"
+                                                        : "Maintenance"}
+                                                </button>
+
+
+                                                <button
+                                                    className="delete-button"
+                                                    onClick={() =>
+                                                        deleteEquipment(
+                                                            item.id
+                                                        )
+                                                    }
+                                                >
+                                                    Delete
+                                                </button>
+
+                                            </div>
+
+                                        </>
+
+                                    )}
 
                                 </div>
-
                             )
                         )}
 
